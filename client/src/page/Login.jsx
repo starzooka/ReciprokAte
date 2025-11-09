@@ -11,7 +11,7 @@ const Login = () => {
   const [formData, setFormData] = useState({ email: '', password: '' });
 
   // ✅ Use Vite env if set, otherwise fallback to localhost
-  const SERVER_URL = import.meta.env.VITE_SERVER_URL || "http://localhost:5000";
+  const SERVER_URL = import.meta.env.VITE_SERVER_URL;
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });

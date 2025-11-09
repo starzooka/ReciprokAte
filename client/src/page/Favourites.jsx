@@ -10,7 +10,7 @@ const Favourites = () => {
   const [error, setError] = useState(null);
 
   // ✅ Use Vite env in prod; fallback to localhost in dev
-  const SERVER_URL = import.meta.env.VITE_SERVER_URL || "http://localhost:5000";
+  const SERVER_URL = import.meta.env.VITE_SERVER_URL;
 
   useEffect(() => {
     const fetchRecipes = async () => {

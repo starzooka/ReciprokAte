@@ -2,7 +2,7 @@
 import axios from "axios";
 
 // ✅ Use Vite env server URL if available, otherwise fallback to localhost
-const SERVER_URL = import.meta.env.VITE_SERVER_URL || "http://localhost:5000";
+const SERVER_URL = import.meta.env.VITE_SERVER_URL;
 
 const API_URL = `${SERVER_URL}/api/favourites`;
 

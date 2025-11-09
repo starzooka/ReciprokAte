@@ -12,7 +12,7 @@ export const AuthProvider = ({ children }) => {
   const token = localStorage.getItem("token");
 
   // ✅ Automatically use deployed server if VITE_SERVER_URL exists, otherwise fallback to localhost
-  const SERVER_URL = import.meta.env.VITE_SERVER_URL || "http://localhost:5000";
+  const SERVER_URL = import.meta.env.VITE_SERVER_URL;
 
   useEffect(() => {
     const fetchUserData = async () => {

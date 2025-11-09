@@ -15,7 +15,7 @@ const Signup = () => {
   });
 
   // ✅ Use Vite env if available; fallback to localhost in development
-  const SERVER_URL = import.meta.env.VITE_SERVER_URL || "http://localhost:5000";
+  const SERVER_URL = import.meta.env.VITE_SERVER_URL;
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });

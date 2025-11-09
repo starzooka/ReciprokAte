@@ -17,7 +17,7 @@ export const Browse = () => {
   const { favourites, toggleFavourite, isFavourite } = useFavourites();
 
   // ✅ Use Vite env if provided; otherwise fall back to localhost
-  const SERVER_URL = import.meta.env.VITE_SERVER_URL || "http://localhost:5000";
+  const SERVER_URL = import.meta.env.VITE_SERVER_URL;
 
   // Fetch recipes
   useEffect(() => {
