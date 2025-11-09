@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom/client';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Login from './page/Login.jsx';
 import Signup from './page/SignUp.jsx';
-import Account from './page/Account';
+import Account from './page/Account.jsx';
 import Header from './components/Header.jsx';
 import { Browse } from './page/Browse.jsx';
 import { Home } from './page/Home.jsx';
