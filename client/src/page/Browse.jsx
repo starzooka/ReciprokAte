@@ -16,11 +16,14 @@ export const Browse = () => {
 
   const { favourites, toggleFavourite, isFavourite } = useFavourites();
 
+  // ✅ Use Vite env if provided; otherwise fall back to localhost
+  const SERVER_URL = import.meta.env.VITE_SERVER_URL || "http://localhost:5000";
+
   // Fetch recipes
   useEffect(() => {
     const fetchRecipes = async () => {
       try {
-        const res = await fetch("http://localhost:5000/api/recipes");
+        const res = await fetch(`${SERVER_URL}/api/recipes`);
         const data = await res.json();
         if (data.success) setRecipes(data.recipes);
       } catch (err) {
@@ -30,15 +33,19 @@ export const Browse = () => {
       }
     };
     fetchRecipes();
-  }, []);
+  }, [SERVER_URL]); // include SERVER_URL so it works across envs
 
-  const availableCountries = useMemo(() => [...new Set(recipes.map(r => r.country))].sort(), [recipes]);
+  const availableCountries = useMemo(
+    () => [...new Set(recipes.map(r => r.country))].sort(),
+    [recipes]
+  );
 
   const filteredMenuItems = useMemo(
     () =>
       recipes.filter(item => {
         const nameMatch = item.name.toLowerCase().includes(searchTerm.toLowerCase());
-        const countryMatch = selectedCountries.length === 0 || selectedCountries.includes(item.country);
+        const countryMatch =
+          selectedCountries.length === 0 || selectedCountries.includes(item.country);
         const dietMatch =
           selectedDiets.length === 0 ||
           (selectedDiets.includes("Vegetarian") && item.type === "veg") ||
@@ -49,11 +56,15 @@ export const Browse = () => {
   );
 
   const toggleCountry = (country) => {
-    setSelectedCountries(prev => (prev.includes(country) ? prev.filter(c => c !== country) : [...prev, country]));
+    setSelectedCountries(prev =>
+      prev.includes(country) ? prev.filter(c => c !== country) : [...prev, country]
+    );
   };
 
   const toggleDiet = (diet) => {
-    setSelectedDiets(prev => (prev.includes(diet) ? prev.filter(d => d !== diet) : [...prev, diet]));
+    setSelectedDiets(prev =>
+      prev.includes(diet) ? prev.filter(d => d !== diet) : [...prev, diet]
+    );
   };
 
   const clearFilters = () => {
@@ -70,8 +81,8 @@ export const Browse = () => {
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between mb-8">
           <div className="flex flex-col">
-          <h2 className="text-5xl font-extrabold text-rose-600">Explore cuisines</h2>
-          <h2 className="text-5xl font-extrabold text-slate-800">from around the world</h2>
+            <h2 className="text-5xl font-extrabold text-rose-600">Explore cuisines</h2>
+            <h2 className="text-5xl font-extrabold text-slate-800">from around the world</h2>
           </div>
           <button
             onClick={() => setIsFilterOpen(true)}
@@ -113,7 +124,7 @@ export const Browse = () => {
           <div
             className="fixed inset-0 z-40 bg-black/20 backdrop-blur-sm transition-all duration-300"
             onClick={() => setIsFilterOpen(false)}
-          ></div>
+          />
           <div className="fixed inset-0 z-50 flex justify-center items-center pointer-events-none">
             <div className="bg-white rounded-xl shadow-xl w-11/12 md:w-1/2 p-6 relative pointer-events-auto">
               <button
@@ -138,8 +149,8 @@ export const Browse = () => {
                       onClick={() => toggleCountry(country)}
                       className={`px-4 py-2 rounded-full text-sm font-medium transition ${
                         selectedCountries.includes(country)
-                          ? 'bg-red-600 text-white'
-                          : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                          ? "bg-red-600 text-white"
+                          : "bg-gray-100 text-gray-700 hover:bg-gray-200"
                       }`}
                     >
                       {country}
@@ -153,14 +164,14 @@ export const Browse = () => {
                   <Leaf className="w-5 h-5 mr-2 text-gray-500" /> By Diet
                 </h3>
                 <div className="flex flex-wrap gap-3">
-                  {['Vegetarian', 'Non-Vegetarian'].map(diet => (
+                  {["Vegetarian", "Non-Vegetarian"].map(diet => (
                     <button
                       key={diet}
                       onClick={() => toggleDiet(diet)}
                       className={`px-4 py-2 rounded-full text-sm font-medium transition ${
                         selectedDiets.includes(diet)
-                          ? 'bg-red-600 text-white'
-                          : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                          ? "bg-red-600 text-white"
+                          : "bg-gray-100 text-gray-700 hover:bg-gray-200"
                       }`}
                     >
                       {diet}

@@ -10,7 +10,9 @@ export const AuthProvider = ({ children }) => {
 
   const token = localStorage.getItem("token");
 
-  // Fetch user data and favourites when token changes
+  // ✅ Automatically uses SERVER_URL in production & localhost in development
+  const SERVER_URL = import.meta.env.VITE_SERVER_URL || "http://localhost:5000";
+
   useEffect(() => {
     const fetchUserData = async () => {
       if (!token) {
@@ -21,19 +23,16 @@ export const AuthProvider = ({ children }) => {
       }
 
       try {
-        // Fetch user info (optional)
-        const userRes = await axios.get("http://localhost:5000/api/account", {
+        const userRes = await axios.get(`${SERVER_URL}/api/account`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         setUser(userRes.data);
 
-        // Fetch favourites
-        const favRes = await axios.get("http://localhost:5000/api/favourites", {
+        const favRes = await axios.get(`${SERVER_URL}/api/favourites`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         const favIds = favRes.data.map(f => f.recipeId);
-        setFavourites(Array.from(new Set(favIds)));
-
+        setFavourites([...new Set(favIds)]);
         setIsLoggedIn(true);
       } catch (err) {
         console.error("Failed to fetch user data:", err);
@@ -44,23 +43,13 @@ export const AuthProvider = ({ children }) => {
     };
 
     fetchUserData();
+  }, [token, SERVER_URL]);
 
-    // Listen for login/logout in localStorage
-    const handleStorageChange = () => {
-      setIsLoggedIn(!!localStorage.getItem("token"));
-      if (!localStorage.getItem("token")) {
-        setUser(null);
-        setFavourites([]);
-      }
-    };
-    window.addEventListener("storage", handleStorageChange);
+  const addFavourite = (id) =>
+    setFavourites(prev => [...new Set([...prev, id])]);
 
-    return () => window.removeEventListener("storage", handleStorageChange);
-  }, [token]);
-
-  // Methods to update favourites
-  const addFavourite = (id) => setFavourites(prev => Array.from(new Set([...prev, id])));
-  const removeFavourite = (id) => setFavourites(prev => prev.filter(f => f !== id));
+  const removeFavourite = (id) =>
+    setFavourites(prev => prev.filter(f => f !== id));
 
   return (
     <AuthContext.Provider value={{

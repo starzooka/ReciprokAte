@@ -1,3 +1,4 @@
+// src/pages/Login.jsx
 import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { LogIn } from 'lucide-react';
@@ -6,8 +7,11 @@ import { useAuth } from "../context/AuthContext.jsx";
 
 const Login = () => {
   const navigate = useNavigate();
-   const { setIsLoggedIn } = useAuth();
+  const { setIsLoggedIn } = useAuth();
   const [formData, setFormData] = useState({ email: '', password: '' });
+
+  // ✅ Use Vite env if set, otherwise fallback to localhost
+  const SERVER_URL = import.meta.env.VITE_SERVER_URL || "http://localhost:5000";
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -17,7 +21,8 @@ const Login = () => {
     e.preventDefault();
 
     try {
-      const response = await axios.post('http://localhost:5000/api/auth/login', {
+      // ✅ Use dynamic server URL
+      const response = await axios.post(`${SERVER_URL}/api/auth/login`, {
         email: formData.email,
         password: formData.password,
       });
@@ -26,11 +31,7 @@ const Login = () => {
       localStorage.setItem('token', response.data.token);
 
       setIsLoggedIn(true);
-      // ✅ Redirect to home page
-      navigate('/');
-
-      // (Optional) success feedback
-      console.log('Login successful:', response.data);
+      navigate('/'); // Redirect to home
     } catch (error) {
       console.error('Login error:', error);
       if (error.response?.data?.error) {
@@ -43,10 +44,7 @@ const Login = () => {
 
   useEffect(() => {
     const token = localStorage.getItem('token');
-    if (token) {
-      // ✅ User already logged in — redirect to home
-      navigate('/');
-    }
+    if (token) navigate('/');
   }, [navigate]);
 
   return (
@@ -56,7 +54,7 @@ const Login = () => {
           <h1 className="text-3xl font-bold text-red-600 mb-2 flex justify-center items-center">
             <LogIn className="w-6 h-6 mr-2" /> Welcome Back
           </h1>
-          <p className="text-gray-500">Log in to your ReiprokAte account</p>
+          <p className="text-gray-500">Log in to your ReciproKate account</p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">

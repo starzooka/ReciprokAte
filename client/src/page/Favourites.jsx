@@ -9,11 +9,14 @@ const Favourites = () => {
   const [recipesLoading, setRecipesLoading] = useState(true);
   const [error, setError] = useState(null);
 
+  // ✅ Use Vite env in prod; fallback to localhost in dev
+  const SERVER_URL = import.meta.env.VITE_SERVER_URL || "http://localhost:5000";
+
   useEffect(() => {
     const fetchRecipes = async () => {
       try {
         setRecipesLoading(true);
-        const res = await fetch("http://localhost:5000/api/recipes");
+        const res = await fetch(`${SERVER_URL}/api/recipes`);
         const data = await res.json();
         if (data.success) setRecipes(data.recipes || []);
         else setError("Failed to load recipes");
@@ -25,7 +28,7 @@ const Favourites = () => {
       }
     };
     fetchRecipes();
-  }, []);
+  }, [SERVER_URL]);
 
   // If your IDs can be strings/numbers, normalize to avoid mismatches:
   const favSet = new Set(favourites.map(String));

@@ -1,10 +1,12 @@
+// src/pages/Signup.jsx
 import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { UserPlus } from 'lucide-react';
 import axios from 'axios';
 
 const Signup = () => {
-  const navigate = useNavigate()
+  const navigate = useNavigate();
+
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
@@ -12,39 +14,44 @@ const Signup = () => {
     password: ''
   });
 
+  // ✅ Use Vite env if available; fallback to localhost in development
+  const SERVER_URL = import.meta.env.VITE_SERVER_URL || "http://localhost:5000";
+
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Here you would typically handle the signup logic, e.g., sending a request to the server
-    axios.post('http://localhost:5000/api/auth/signup', {
-      first_name: formData.firstName,
-      last_name: formData.lastName,
-      email: formData.email,
-      password: formData.password
-    }).then(response => {
-      // Handle successful signup, e.g., redirect to login, show message, etc.
+
+    try {
+      const response = await axios.post(`${SERVER_URL}/api/auth/signup`, {
+        first_name: formData.firstName,
+        last_name: formData.lastName,
+        email: formData.email,
+        password: formData.password,
+      });
+
       console.log('Signup successful:', response.data);
       alert(`Account created for: ${formData.firstName} ${formData.lastName}`);
-    }).catch(error => {
-      // Handle signup error
-      console.error('Signup error:', error);
-      if (error.response && error.response.data && error.response.data.error) {
-        alert(`Signup failed: ${error.response.data.error}`);
-      }
-    });
 
+      // ✅ Redirect to login after successful signup
+      navigate('/login');
+    } catch (error) {
+      console.error('Signup error:', error);
+      if (error.response?.data?.error) {
+        alert(`Signup failed: ${error.response.data.error}`);
+      } else {
+        alert('Signup failed: An unexpected error occurred.');
+      }
+    }
   };
+
   useEffect(() => {
     const token = localStorage.getItem('token');
-    if (token) {
-      // Optionally, you could verify the token or redirect the user
-      navigate("/")
-      // console.log('User already logged in with token:', token);
-    }
+    if (token) navigate("/");
   }, [navigate]);
+
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-50 px-4">
       <div className="max-w-md w-full bg-white rounded-xl shadow-xl p-8">
@@ -52,11 +59,11 @@ const Signup = () => {
           <h1 className="text-3xl font-bold text-red-600 mb-2 flex justify-center items-center">
             <UserPlus className="w-6 h-6 mr-2" /> Create Account
           </h1>
-          <p className="text-gray-500">Join the ReiprokAte family today</p>
+          <p className="text-gray-500">Join the ReciproKate family today</p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">
-          {/* First & Last Name */}
+
           <div className="grid grid-cols-2 gap-4">
             <div>
               <label className="block text-gray-700 font-medium mb-1">First Name</label>
@@ -84,7 +91,6 @@ const Signup = () => {
             </div>
           </div>
 
-          {/* Email */}
           <div>
             <label className="block text-gray-700 font-medium mb-1">Email</label>
             <input
@@ -98,7 +104,6 @@ const Signup = () => {
             />
           </div>
 
-          {/* Password */}
           <div>
             <label className="block text-gray-700 font-medium mb-1">Password</label>
             <input
@@ -112,7 +117,6 @@ const Signup = () => {
             />
           </div>
 
-          {/* Submit Button */}
           <button
             type="submit"
             className="w-full bg-red-600 text-white py-3 rounded-lg font-semibold hover:bg-red-700 transition"
