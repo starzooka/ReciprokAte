@@ -1,7 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import Header from './components/Header.jsx';
-import MenuItem from './components/MenuItem.jsx';
-import { initialMenuItems } from './data/MenuItems.js';
 
 const App = () => {
   // const [cart, setCart] = useState([]);
